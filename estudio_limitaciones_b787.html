@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2c3138">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lim B787">
+<link rel="manifest" id="mf">
+<script>
+// Inline PWA manifest (single-file friendly)
+(function(){
+  const icon = 'data:image/svg+xml,'+encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192"><rect width="192" height="192" rx="34" fill="#2c3138"/><text x="96" y="88" font-family="Arial" font-size="52" font-weight="bold" fill="#ffc36b" text-anchor="middle">787</text><text x="96" y="140" font-family="Arial" font-size="30" fill="#cfd4da" text-anchor="middle">LIM</text></svg>`);
+  const manifest = {
+    name:'Limitaciones B787 — Estudio',
+    short_name:'Lim B787',
+    display:'fullscreen',
+    orientation:'portrait',
+    background_color:'#3b4048',
+    theme_color:'#2c3138',
+    start_url:location.href,
+    icons:[{src:icon,sizes:'192x192',type:'image/svg+xml',purpose:'any'}]
+  };
+  document.getElementById('mf').href =
+    'data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest));
+})();
+</script>
+<title>Examen de Limitaciones e Items de Memoria B787 — Ayuda de Estudio</title>
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --rule:#8a8a8a;
+    --hdr-rule:#b9b9b9;
+    --maroon:#6b1f1f;
+    --answer:#1a44c2;
+    --blank:#333;
+    --bg:#3b4048;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    font-family:'Times New Roman',Times,serif;
+    color:var(--ink);
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    user-select:none;
+  }
+  /* -------- toolbar -------- */
+  .bar{
+    flex:0 0 auto;color:#cfd4da;
+    font:12px/1 Arial,Helvetica,sans-serif;letter-spacing:.08em;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 14px;background:#2c3138;border-bottom:1px solid #1f242a;
+  }
+  .bar .cnt b{color:#ffc36b}
+  .zctl{display:flex;align-items:center;gap:6px}
+  .zctl button{
+    width:26px;height:26px;border:1px solid #4a515a;border-radius:5px;
+    background:#3a4049;color:#e8ecf1;font:bold 15px/1 Arial,sans-serif;
+    cursor:pointer;
+  }
+  .zctl button:active{background:#4a525c}
+  .zctl #zval{min-width:42px;text-align:center;color:#ffc36b}
+  /* -------- stage / paper pages -------- */
+  #stage{flex:1;position:relative;overflow:hidden}
+  .sheetwrap{
+    position:absolute;inset:0;overflow:auto;
+    padding:16px 8px 90px;
+    transition:transform .55s cubic-bezier(.22,.9,.28,1),opacity .55s;
+  }
+  .sheetwrap.off-r{transform:translateX(105%);opacity:0;pointer-events:none}
+  .sheetwrap.off-l{transform:translateX(-105%);opacity:0;pointer-events:none}
+  @media (prefers-reduced-motion:reduce){
+    .sheetwrap{transition:opacity .2s}
+    .sheetwrap.off-r,.sheetwrap.off-l{transform:none}
+  }
+  /* Fixed-width page, scaled to fit viewport width (never reflows) */
+  .scaler{
+    width:760px;
+    transform-origin:top left;
+    margin:0 auto;
+    transition:transform .45s ease;
+  }
+  @media (prefers-reduced-motion:reduce){.scaler{transition:none}}
+  .sheet{
+    background:#fff;
+    width:760px;
+    min-height:1175px; /* 760 × (612/396) = proporción exacta de la página original */
+    padding:34px 44px 30px;
+    box-shadow:0 3px 18px rgba(0,0,0,.45);
+    font-size:14.5px;line-height:1.5;
+    display:flex;flex-direction:column;
+  }
+  .sheet .pfoot{margin-top:auto;padding-top:5px}
+  /* -------- original page header / footer -------- */
+  .phead{
+    display:flex;align-items:flex-end;gap:14px;
+    padding-bottom:4px;border-bottom:4px solid var(--hdr-rule);
+    margin-bottom:18px;
+  }
+  .phead .small{font-size:10.5px;font-weight:bold;line-height:1.25}
+  .phead .big{font-size:17px;font-weight:bold}
+  .pfoot{
+    margin-top:34px;padding-top:5px;border-top:3px solid var(--maroon);
+    display:flex;justify-content:space-between;
+    font:11.5px Arial,Helvetica,sans-serif;
+  }
+  /* -------- exam content styles -------- */
+  h2{font-size:17px;margin:20px 0 8px}
+  h3{font-size:15.5px;margin:16px 0 6px}
+  .b787h{border-bottom:3px solid var(--hdr-rule);padding-bottom:4px}
+  p{margin:0 0 9px}
+  .note{font-size:13px}
+  .note .nlbl{font-weight:bold}
+  table.w{border-collapse:collapse;margin:8px 0 14px;width:75%}
+  table.w td{border:1px solid var(--ink);padding:5px 10px;font-size:14px}
+  /* blank / answer */
+  .b{
+    display:inline-block;position:relative;
+    border-bottom:1.4px solid var(--blank);
+    min-width:70px;text-align:center;padding:0 8px;
+    color:transparent;transition:color .3s;
+    font-family:Georgia,'Times New Roman',serif;
+    font-style:italic;font-weight:800;font-size:1.06em;line-height:inherit;
+  }
+  .b.on{color:var(--answer);animation:pop .3s}
+  @keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+  @media (prefers-reduced-motion:reduce){.b.on{animation:none}}
+  /* QRH checklist boxes */
+  .qbox{
+    border:1.6px solid var(--ink);
+    padding:16px 22px 12px;margin:16px 0 22px;position:relative;
+    font-family:Verdana,Arial,sans-serif;font-size:12.5px;line-height:1.55;
+  }
+  .qnum{position:absolute;top:8px;right:16px;font-weight:bold;font-size:13px}
+  .qtitle{
+    text-align:center;margin:10px auto 10px;position:relative;
+  }
+  .qtitle span{
+    display:inline-block;border:1.6px solid var(--ink);
+    padding:4px 26px;font-weight:bold;font-size:13.5px;background:#fff;
+    position:relative;z-index:1;
+  }
+  .qtitle::before{
+    content:'';position:absolute;left:0;right:0;top:50%;
+    border-top:1.6px solid var(--ink);
+  }
+  .qcond{
+    background:#ddeef6;border:1px solid #9fb8c6;
+    padding:5px 10px;margin:8px 0 14px;font-size:12px;
+  }
+  .qcond b{font-weight:bold}
+  .qstep{margin:0 0 8px;padding-left:22px;position:relative}
+  .qstep .n{position:absolute;left:0;font-weight:bold}
+  .dots-line{letter-spacing:2px}
+  .qdash{margin-top:12px;letter-spacing:3px;color:var(--ink);font-size:12px;overflow:hidden;white-space:nowrap}
+  .indent{padding-left:26px}
+  .bullet{padding-left:16px;position:relative}
+  .bullet::before{content:'•';position:absolute;left:2px}
+  /* quiz */
+  .qz p{margin-bottom:7px}
+  .qz .opt{padding-left:34px}
+  .tf{display:inline-block;margin-right:40px}
+  .tf .box{display:inline-block;width:13px;height:13px;border:1.4px solid var(--ink);vertical-align:-2px;margin-left:8px;position:relative}
+  .tf.pick .box::after{
+    content:'✔';position:absolute;left:0;top:-4px;font-size:15px;color:transparent;transition:color .3s;font-weight:bold;
+  }
+  .tf.pick.on .box::after{color:var(--answer)}
+  .tick{position:relative;display:inline-block;font-weight:normal}
+  .tick::after{
+    content:'✔';position:absolute;left:2px;top:-7px;
+    font-family:Georgia,serif;font-style:italic;font-weight:800;
+    font-size:19px;color:transparent;transition:color .3s;
+  }
+  .tick.on::after{color:var(--answer)}
+  /* footer hint */
+  footer{
+    position:fixed;bottom:0;left:0;right:0;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top,rgba(20,23,27,.95) 55%,transparent);
+    text-align:center;font:11.5px Arial,Helvetica,sans-serif;
+    letter-spacing:.1em;color:#aeb6bf;pointer-events:none;
+  }
+  footer b{color:#ffc36b}
+  footer .fin{color:#59d98a}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div>EXAMEN LIMITACIONES B787 · MODO ESTUDIO</div>
+  <div class="zctl">
+    <button id="zout" aria-label="Alejar">−</button>
+    <span id="zval">115%</span>
+    <button id="zin" aria-label="Acercar">+</button>
+  </div>
+  <div class="cnt">Página <b id="pgnum">2</b> de 10</div>
+</div>
+
+<div id="stage"></div>
+
+<footer id="hint"></footer>
+
+<script>
+const HEAD = `<div class="phead">
+  <div class="small">Operating&nbsp;Limitations&nbsp;and<br>Recall Items Test</div>
+  <div class="big">787 Flight Crew Operations Manual</div>
+</div>`;
+function FOOT(n){return `<div class="pfoot"><div>LAN B787 FCOM REV.22&nbsp; 22/07/2021</div><div>Page ${n}</div></div>`;}
+
+const PAGES = [
+
+/* ================= PAGE 2 ================= */
+HEAD + `
+<h2 class="b787h">Airplane General</h2>
+<h3>Operational Limitations</h3>
+<table class="w"><tr>
+  <td># Maximum Takeoff and Landing Tailwind Component</td>
+  <td><span class="b">15</span> knots</td>
+</tr></table>
+<p class="note"><span class="nlbl">Note:</span> The capability of the airplane has been satisfactorily demonstrated for takeoffs and landings with tailwinds up to 15 knots. This does not constitute operational approval to conduct takeoffs or landings with tailwind in excess of 10 knots.</p>
+<p class="note" style="color:#1a44c2"><span class="nlbl">Rev. 31:</span> el límite AFM vigente es 15 knots; la nota restrictiva de 10 kt corresponde a la Rev. 22 del examen.</p>
+
+<h3>Turbulent Air Penetration Speed</h3>
+<p># Turbulent air penetration speed (in severe turbulence) is defined as:</p>
+<p class="indent"><span class="b">290</span> KIAS below 25,000 feet</p>
+<p class="indent"><span class="b">310</span> KIAS / <span class="b">.84</span> Mach (whichever is lower) at and above 25,000 feet.</p>
+
+<h3>Operational Information</h3>
+<p># Do not operate HF radios when <span class="b">refueling</span></p>
+
+<h3>Non–AFM Operational Information</h3>
+<p># Avoid weather radar operation in <span class="b">a hangar</span></p>
+
+<h2 class="b787h">Autoflight</h2>
+<h3>Autopilot/Flight Director System</h3>
+<p># The autopilot must not be engaged below a minimum engage altitude of <span class="b">200</span> feet AGL after takeoff.</p>
+<p># Autoland capability may only be used for operations into runways at or below <span class="b">8,400</span> feet airport field elevation.</p>
+<p><b>CC-BBA – CC-BBJ</b></p>
+<p># Without LAND 2 or LAND 3 annunciated, the autopilot must be disengaged below <span class="b">100</span> feet AGL.</p>
+<p><b>CC-BGA – CC-BGL</b></p>
+<p># Without LAND 2 or LAND 3 annunciated, the autopilot must be disengaged below <span class="b">135</span> feet AGL.</p>
+<p># With LAND 2 or LAND 3 annunciated and glidepath angles greater than <span class="b">3.25</span> degrees, the autopilot must be disengaged below 100 feet AGL.</p>
+` + FOOT(2),
+
+/* ================= PAGE 3 ================= */
+HEAD + `
+<h3>Low Visibility (HUD) Takeoff</h3>
+<p>Low weather minima takeoff may only be performed using ILS guidance on U.S. Type II or Type III ILS facilities.</p>
+<p>Maximum wind component speeds when takeoff weather minima are predicated on HUD takeoff operations:</p>
+<table class="w">
+  <tr><td># Headwind</td><td><span class="b">25</span> knots</td></tr>
+  <tr><td># Tailwind</td><td><span class="b">15</span> knots</td></tr>
+  <tr><td># Crosswind</td><td><span class="b">20</span> knots</td></tr>
+</table>
+
+<h3>Automatic Landing</h3>
+<p>Maximum wind component speeds when landing weather minima are predicated on autoland and CAT II/III operations:</p>
+<table class="w">
+  <tr><td># Headwind</td><td><span class="b">25</span> knots</td></tr>
+  <tr><td># Tailwind</td><td><span class="b">10</span> knots</td></tr>
+  <tr><td># Crosswind</td><td><span class="b">25</span> knots</td></tr>
+</table>
+<p># The maximum glideslope angles is <span class="b">3.25 degrees</span></p>
+<p># The minimum glideslope angle is <span class="b">2.5 degrees</span></p>
+
+<h3>Non–AFM Operational Information</h3>
+<p>Operational approval is required for low visibility operations using HUD TO/GA.</p>
+<p># Do not use FLCH on final approach below <span class="b">1,000 feet AFE</span></p>
+
+<h2 class="b787h">Engines</h2>
+<h3>Engine Oil System</h3>
+<p># Oil temperature must be greater than <span class="b">−40</span> °C for engine start.</p>
+<h3>Reverse Thrust</h3>
+<p># Intentional selection of <span class="b">reverse thrust in flight</span> is prohibited.</p>
+<p># Backing the airplane with <span class="b">use of reverse thrust</span> is prohibited.</p>
+` + FOOT(3),
+
+/* ================= PAGE 4 ================= */
+HEAD + `
+<h2 class="b787h">Flight Controls</h2>
+<p>Takeoff is permitted only in the normal flight control mode. (Refer to Flight Control System Normal Mode in Chapter 9, Section 20, for additional Information.)</p>
+<p># Avoid <span class="b">rapid and large alternating</span> control inputs, especially in combination with large changes in pitch, roll, or yaw (e.g. large side slip angles) as they may result in structural failure at any speed, including below VA.</p>
+` + FOOT(4),
+
+/* ================= PAGE 5 ================= */
+HEAD + `
+<div class="qbox"><div class="qnum">2.1</div>
+  <div class="qtitle"><span>[] CABIN ALTITUDE</span></div>
+  <div class="qcond"><b>Condition:</b>&nbsp; Cabin altitude is excessive.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">Don the oxygen masks</span></p>
+  <p class="qstep"><span class="n">2</span> <span class="b">Establish crew communications</span></p>
+  <p class="qstep"><span class="n">3</span> <span class="b">Verify cabin altitude and rate</span></p>
+  <p class="qstep"><span class="n">4</span> <b>If</b> the cabin altitude is uncontrollable:</p>
+  <p class="indent"><span class="b">PASS OXYGEN switch</span> <span class="dots-line">. . . . . . .</span> Push to <span class="b">ON</span> and hold for 1 second</p>
+  <p class="indent"><b>Without delay</b>, descend to the lowest safe altitude or <span class="b">10,000</span> feet, whichever is higher.</p>
+  <p>To descend:</p>
+  <p class="bullet"><span class="b">Move the thrust levers to idle</span></p>
+  <p class="bullet"><span class="b">Extend the speedbrakes</span></p>
+  <p class="bullet">If structural integrity is in doubt, limit airspeed and avoid high maneuvering loads</p>
+  <p class="bullet">Descend at <span class="b">VMO / MMO</span></p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+
+<div class="qbox"><div class="qnum">7.1</div>
+  <div class="qtitle"><span>Aborted Engine Start L, R</span></div>
+  <div class="qcond"><b>Condition:</b> On the ground, an aborted engine start is needed.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">FUEL CONTROL switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . . . . .</span> <span class="b">CUTOFF</span></p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+` + FOOT(5),
+
+/* ================= PAGE 6 ================= */
+HEAD + `
+<div class="qbox"><div class="qnum">7.2</div>
+  <div class="qtitle"><span>Dual Eng Fail/Stall</span></div>
+  <div class="qcond"><b>Condition:</b> Engine speed for both engines is below idle.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">FUEL CONTROL switches</span><br>
+    (both) <span class="dots-line">. . . . . . . . . . . . . . . . . . . . . . . . . . . .</span> <span class="b">CUTOFF, then RUN</span></p>
+  <p class="qstep"><span class="n">2</span> <span class="b">RAM AIR TURBINE switch</span> <span class="dots-line">. . . . . . . . .</span> <span class="b">Push and hold for 1 second</span></p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+
+<div class="qbox"><div class="qnum">7.3</div>
+  <div class="qtitle"><span>[] ENG AUTOSTART L, R</span></div>
+  <div class="qcond"><b>Condition:</b> Autostart did not start the engine.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">FUEL CONTROL switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . .</span> <span class="b">CUTOFF</span></p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+
+<div class="qbox"><div class="qnum">7.4</div>
+  <div class="qtitle"><span>[] ENG LIMIT EXCEED L, R</span></div>
+  <div class="qcond"><b>Condition:</b> An engine limit exceedance occurs.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">A/T ARM switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . . . . .</span> <span class="b">OFF</span></p>
+  <p class="qstep"><span class="n">2</span> <span class="b">Thrust lever</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . .</span> <span class="b">Retard</span> until the <span class="b">ENG LIMIT EXCEED</span> message <span class="b">blanks</span> or the thrust lever is at idle</p>
+</div>
+` + FOOT(6),
+
+/* ================= PAGE 7 ================= */
+HEAD + `
+<div class="qbox"><div class="qnum">7.7</div>
+  <div class="qtitle"><span>[] ENG SURGE L, R</span></div>
+  <div class="qcond"><b>Condition:</b> An engine surge or stall that requires crew action is detected.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">A/T ARM switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . . . . .</span> <span class="b">OFF</span></p>
+  <p class="qstep"><span class="n">2</span> <span class="b">Thrust lever</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . .</span> <span class="b">Retard</span> until the <span class="b">ENG SURGE</span> message <span class="b">blanks</span> or the thrust lever is at idle</p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+
+<div class="qbox"><div class="qnum">7.8</div>
+  <div class="qtitle"><span>Eng Svr Damage/Sep L, R</span></div>
+  <div class="qcond"><b>Condition:</b> One or more of these occur:<br>
+    •Airframe vibrations with abnormal engine indications<br>
+    •Engine separation</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">A/T ARM switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">OFF</span></p>
+  <p class="qstep"><span class="n">2</span> <span class="b">Thrust lever</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">Idle</span></p>
+  <p class="qstep"><span class="n">3</span> <span class="b">FUEL CONTROL switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">CUTOFF</span></p>
+  <p class="qstep"><span class="n">4</span> <span class="b">Engine fire switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">Pull</span></p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+` + FOOT(7),
+
+/* ================= PAGE 8 ================= */
+HEAD + `
+<div class="qbox"><div class="qnum">8.2</div>
+  <div class="qtitle"><span>[] FIRE ENG L, R</span></div>
+  <div class="qcond"><b>Condition:</b> Fire is detected in the engine.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">A/T ARM switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">OFF</span></p>
+  <p class="qstep"><span class="n">2</span> <span class="b">Thrust lever</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">Idle</span></p>
+  <p class="qstep"><span class="n">3</span> <span class="b">FUEL CONTROL switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">CUTOFF</span></p>
+  <p class="qstep"><span class="n">4</span> <span class="b">Engine fire switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . .</span> Confirm <span class="dots-line">. . . . . . . .</span> <span class="b">Pull</span></p>
+  <p class="qstep"><span class="n">5</span> If the FIRE ENG message stays shown:</p>
+  <p class="indent"><span class="b">Engine fire switch</span><br>
+    (affected side) <span class="dots-line">. . . . . . . . . . . . . . . . . . .</span> <span class="b">Rotate to the stop</span> and hold for 1 second</p>
+</div>
+` + FOOT(8),
+
+/* ================= PAGE 9 ================= */
+HEAD + `
+<div class="qbox"><div class="qnum">9.1</div>
+  <div class="qtitle"><span>[] STABILIZER</span></div>
+  <div class="qcond"><b>Condition:</b> One of these occurs:<br>
+    •Stabilizer movement without a signal to trim<br>
+    •The stabilizer is failed</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">STAB cutout switches</span> (both) <span class="dots-line">. . . . . . . . . . . . .</span> CUTOUT</p>
+  <p class="qstep"><span class="n">2</span> <span class="b">Do not exceed the current airspeed</span></p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+
+<div class="qbox"><div class="qnum">10.1</div>
+  <div class="qtitle"><span>[] AIRSPEED UNRELIABLE</span></div>
+  <div class="qcond"><b>Condition:</b> The airspeed or Mach indications disagree with AOA calculated airspeed.<br>
+    <b>Objective:</b> To identify a reliable airspeed indication.</div>
+  <p class="qstep"><span class="n">1</span> <span class="b">Autopilot disengage switch</span> <span class="dots-line">. . . . . . . . . . . . . . . . . . .</span> Push</p>
+  <p class="qstep"><span class="n">2</span> <span class="b">A/T ARM switches</span> (both) <span class="dots-line">. . . . . . . . . . . . . . . . . . .</span> OFF</p>
+  <p class="qstep"><span class="n">3</span> <span class="b">F/D switches</span> (both) <span class="dots-line">. . . . . . . . . . . . . . . . . . .</span> OFF</p>
+  <p class="qstep"><span class="n">4</span> Set the following gear up pitch attitude and thrust:</p>
+  <p class="indent"><span class="b">Flaps extended: 10°</span> <span class="dots-line">. . . . . . . . . . . .</span> <span class="b">85%</span> N1</p>
+  <p class="indent"><span class="b">Flaps up: 4°</span> <span class="dots-line">. . . . . . . . . . . .</span> <span class="b">75%</span> N1</p>
+  <div class="qdash">- - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+</div>
+` + FOOT(9),
+
+/* ================= PAGE 10 ================= */
+`<div class="phead">
+  <div class="small">Operating&nbsp;Limitations,&nbsp;Recall<br>Items and Differences Test</div>
+  <div class="big">787 Flight Crew Operations Manual</div>
+</div>
+<div class="qz">
+<h3 style="text-align:center">DIFFERENCES B787 -8/-9 Test</h3>
+
+<p><b>1.-</b> The Maximun Landing Weight in B787-8 and -9 respectively is:</p>
+<p class="opt">a.- 185.666 kg and 195.666 kg</p>
+<p class="opt"><span class="tick">b.-</span> 172.365 kg and 192.776 kg</p>
+<p class="opt">c.- 152.365 kg and 192.766 kg</p>
+
+<p><b>2.-</b> Minimun pavement with for 180° turn is 42,2 meters for 787-8 and 47 meters for 787-9. Caution: Requires light differential braking/thrust for 180° turns on 150 ft (45 meters) wide runway</p>
+<p class="opt"><span class="tf pick"><b>True</b><span class="box"></span></span><span class="tf">False<span class="box"></span></span></p>
+
+<p><b>3.-</b> The basic difference in the alternate ventilation system between 787-8 and -9 is:</p>
+<p class="opt">a.- The B787-8 has three alternates valves and the B787-9 just two valves</p>
+<p class="opt">b.- The B787-9 has a unique Total Venting Valve (TVV)</p>
+<p class="opt"><span class="tick">c.-</span> In the B787-9 the outflow valves (OFVs) have been redesigned to open beyond the full open position in order to perform ram air recovery. This redesign feature is provided as mitigation to a loss of conditioned inflow event and consist of the same flight deck switch an modified OFVs</p>
+
+<p><b>4.-</b> In the B787-9 Flaps 5, 10, 15, 17, 18, and 20 are takeoff flap positions. Flaps 25 and 30 are landing flaps positions. Flaps 20 is used for some non-normal landing conditions.</p>
+<p class="opt"><span class="tf pick"><b>True</b><span class="box"></span></span><span class="tf">False<span class="box"></span></span></p>
+
+<p><b>5.-</b> To improve B787-9 performance, an early doors function automatically pre-opens the main landing gear doors one second after lift-off and prior to the pilot moving the gear lever to the UP position.</p>
+<p class="opt"><span class="tf pick"><b>True</b><span class="box"></span></span><span class="tf">False<span class="box"></span></span></p>
+</div>
+` + FOOT(10)
+];
+
+const stage = document.getElementById('stage');
+const pgnum = document.getElementById('pgnum');
+const hint  = document.getElementById('hint');
+
+const pageEls = PAGES.map((html,i)=>{
+  const w=document.createElement('div');
+  w.className='sheetwrap'+(i===0?'':' off-r');
+  w.innerHTML='<div class="scaler"><div class="sheet">'+html+'</div></div>';
+  stage.appendChild(w);
+  return w;
+});
+
+let cur=0;
+// Scale fixed 760px sheet to viewport width — layout never reflows, only zooms
+let baseS=1;
+let userZoom=1.15;               // zoom por defecto un poco más alto
+try{ const s=localStorage.getItem('b787zoom'); if(s) userZoom=parseFloat(s); }catch(e){}
+let zoom=userZoom;               // zoom vigente (se multiplica al revelar)
+const zval=document.getElementById('zval');
+function saveZoom(){ try{ localStorage.setItem('b787zoom',userZoom); }catch(e){} }
+function showZoom(){ zval.textContent=Math.round(userZoom*100)+'%'; }
+function setUserZoom(v){
+  userZoom=Math.min(2,Math.max(0.6,Math.round(v*20)/20));
+  zoom=userZoom;
+  saveZoom(); showZoom(); applyScale();
+}
+document.getElementById('zin').addEventListener('click',e=>{e.stopPropagation();setUserZoom(userZoom+0.05);});
+document.getElementById('zout').addEventListener('click',e=>{e.stopPropagation();setUserZoom(userZoom-0.05);});
+showZoom();
+function applyScale(){
+  pageEls.forEach((w,i)=>{
+    const sc=w.querySelector('.scaler');
+    const sheet=sc.firstElementChild;
+    const z=(i===cur)?zoom:1;
+    const s=baseS*z;
+    sc.style.transform='scale('+s+')';
+    sc.style.height=(sheet.offsetHeight*s)+'px';
+    sc.style.marginLeft=Math.max(0,(stage.clientWidth-760*s)/2)+'px';
+    sc.style.marginRight='0';
+  });
+}
+function fitWidth(){
+  const pad=16;
+  baseS=Math.min(1,(stage.clientWidth-pad)/760);
+  applyScale();
+}
+window.addEventListener('resize',fitWidth);
+window.addEventListener('orientationchange',()=>setTimeout(fitWidth,150));
+fitWidth();
+
+function targets(p){
+  return [...pageEls[p].querySelectorAll('.b:not(.on), .tick:not(.on), .tf.pick:not(.on)')];
+}
+function updateHint(){
+  const r=targets(cur).length;
+  if(r>0) hint.innerHTML='Toca la hoja para revelar <b>la siguiente respuesta</b> · quedan '+r;
+  else if(cur<PAGES.length-1) hint.innerHTML='Hoja completa · toca para pasar a la <b>página siguiente</b>';
+  else hint.innerHTML='<span class="fin">✔ Estudio completado</span>';
+}
+updateHint();
+
+function advance(){
+  const t=targets(cur);
+  if(t.length){
+    const el=t[0];
+    el.classList.add('on');
+    zoom=userZoom*1.2;
+    applyScale();
+    setTimeout(()=>{
+      el.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});
+    },220);
+  }else if(cur<PAGES.length-1){
+    zoom=userZoom;
+    pageEls[cur].classList.add('off-l');
+    pageEls[cur].classList.remove('off-r');
+    cur++;
+    pageEls[cur].classList.remove('off-r');
+    pageEls[cur].scrollTop=0;
+    pageEls[cur].scrollLeft=0;
+    pgnum.textContent=cur+2;
+    applyScale();
+  }
+  updateHint();
+}
+stage.addEventListener('click',advance);
+document.addEventListener('keydown',e=>{
+  if(e.key===' '||e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();advance();}
+});
+</script>
+</body>
+</html>
