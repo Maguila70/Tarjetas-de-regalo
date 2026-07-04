@@ -535,7 +535,56 @@ function advance(){
 stage.addEventListener('click',advance);
 document.addEventListener('keydown',e=>{
   if(e.key===' '||e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();advance();}
+  if(e.key==='ArrowLeft'){e.preventDefault();goBack();}
 });
+
+// --- Swipe izquierda→derecha: reinicia la página; si ya está vacía, vuelve a la anterior ---
+function resetPage(p){
+  pageEls[p].querySelectorAll('.on').forEach(el=>el.classList.remove('on'));
+}
+function goBack(){
+  const revealed=pageEls[cur].querySelectorAll('.on').length;
+  if(revealed>0){
+    // volver al comienzo de la página (ocultar todo)
+    resetPage(cur);
+    zoom=userZoom;
+    pageEls[cur].scrollTo({top:0,left:0,behavior:'smooth'});
+    applyScale();
+  }else if(cur>0){
+    // página vacía: retroceder a la anterior (también reiniciada)
+    zoom=userZoom;
+    pageEls[cur].classList.add('off-r');
+    pageEls[cur].classList.remove('off-l');
+    cur--;
+    resetPage(cur);
+    pageEls[cur].classList.remove('off-l','off-r');
+    pageEls[cur].scrollTop=0;
+    pageEls[cur].scrollLeft=0;
+    pgnum.textContent=cur+2;
+    applyScale();
+  }
+  updateHint();
+}
+let tX=0,tY=0,tSL=0,swiped=false;
+stage.addEventListener('touchstart',e=>{
+  const t=e.touches[0];
+  tX=t.clientX; tY=t.clientY;
+  tSL=pageEls[cur].scrollLeft;
+  swiped=false;
+},{passive:true});
+stage.addEventListener('touchend',e=>{
+  const t=e.changedTouches[0];
+  const dx=t.clientX-tX, dy=t.clientY-tY;
+  // swipe horizontal claro, hacia la derecha, sin estar desplazando la hoja con zoom
+  if(dx>80 && Math.abs(dy)<60 && tSL<=2){
+    swiped=true;
+    goBack();
+  }
+},{passive:true});
+// evitar que el tap final del swipe dispare un click de avance
+stage.addEventListener('click',e=>{
+  if(swiped){e.stopImmediatePropagation();swiped=false;}
+},true);
 </script>
 </body>
 </html>
